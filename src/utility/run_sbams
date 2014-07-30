@@ -1,0 +1,315 @@
+#!/usr/bin/perl
+
+
+parse_args();
+read_params($param_file);
+
+if($option==2){
+    def_cis_snp();
+    exit;
+}
+
+if($option==3){
+    assemble();
+    exit;
+}
+
+if($option==4){
+    gene_level_analysis();
+    exit;
+}
+
+if($option==5){
+    fine_mapping();
+}
+
+
+if($option==6){
+    prep_hm();
+}
+
+sub parse_args{
+    
+    $option = -1;
+
+    for $i (0..$#ARGV){
+	
+	if($ARGV[$i] eq '-p'){
+	    $param_file = $ARGV[++$i];
+	    next;
+	}
+
+	if($ARGV[$i] eq "-cis_def"){
+	    $option = 2;
+	}
+
+	if($ARGV[$i] eq "-assemble"){
+	    $option = 3;
+	}
+	
+	if($ARGV[$i] eq "-ga"){
+	    $option = 4;
+	}
+	
+	if($ARGV[$i] eq "-fine_mapping" || $ARGV[$i] eq "-fm" ){
+	    $option = 5;
+	}
+
+	if($ARGV[$i] eq "-prep_hm"){
+	    $option = 6;
+	}
+    }
+    
+    if(!defined($param_file)){
+	print STDERR "Error: parameter file is not specified\n";
+	
+	exit;
+    }
+
+    if($option == -1){
+	print STDERR "Error: no valid option defined\n";
+	exit;
+    }
+
+}
+    
+
+
+sub read_params {
+    
+    my ($file) = @_;
+    open PARAM, "$file";
+    while(<PARAM>){
+	chomp;
+	next if $_ !~ /\S/;
+	next if /^\s*\#/;
+	
+	if ($_ !~ /^\s*(\S+)\s+(\S+)/){
+	    print STDERR "Warning: unexpected parameter file format\n";
+	    print "$_\n";
+	    next;
+	}
+	my $key =  $1;
+	my $val =  $2;
+	$key =~ tr/a-z/A-Z/;
+	$param{$key} = $val;
+    }
+
+}
+
+sub def_cis_snp{
+    
+    if(!defined($param{CIS_DEF_DIR})){
+	$param{CIS_DEF_DIR} =  './';
+    }
+    if (! -d $param{CIS_DEF_DIR}){
+	`mkdir $param{CIS_DEF_DIR}`;
+    }
+    
+
+
+    open OUT, ">batch_cis.cmd";
+    my $script = $param{SBAMS_BIN}."\/cis_snp.pl";
+    if(! -r $script){
+	print STDERR "Error: required script cis_snp.pl can't be read\n";
+	exit;
+    }
+    for $chr (1..22){
+	my $gene_map = $param{GENE_MAP};
+	$gene_map=~s/\*/$chr/;
+	my $snp_map = $param{SNP_MAP};
+	$snp_map=~s/\*/$chr/;
+	$out = "$param{CIS_DEF_DIR}\/chr$chr.cis.snp";
+	print OUT "perl $script $gene_map  $snp_map $param{CIS_RD} $out\n";
+	
+    }
+}
+
+
+sub assemble {
+    
+    my $subgrp_file = $param{SUBGRP_DEF};
+    if(!defined($param{ASSEMBLE_DIR})){
+	$param{ASSEMBLE_DIR} =  './';
+    }
+    if (! -d $param{ASSEMBLE_DIR}){
+	`mkdir $param{ASSEMBLE_DIR}`;
+    }
+    
+    open OUT, ">batch_assemble.cmd";
+    my $script = $param{SBAMS_BIN}."\/assemble_sslr.pl";
+    
+
+    for $chr (1..22){
+	my $cis_file = $param{CIS_DEF_MAP};
+	my $geno_data = $param{GENO_DATA}; # may contain wildcard for chromosomes, wildcard handled here
+	$cis_file =~s/\*/$chr/;
+	$geno_data =~s/\*/$chr/;
+
+	my $expr_data = $param{EXPR_DATA}; # may contain wildcard for subgroups, wildcard should be passed on 
+	
+
+	
+	
+	#print OUT "perl $script $subgrp_file $cis_file \"$expr_data\" \"$geno_data\" $param{ASSEMBLE_DIR}\n";
+	print OUT "perl $script $subgrp_file $cis_file \'$expr_data\' \'$geno_data\' $param{ASSEMBLE_DIR}\n";
+    }
+}
+
+
+######################################################################################################
+
+	
+sub gene_level_analysis {
+
+
+    
+    if(-r $param{USE_SUBSET}){
+	$use_subset = 1;
+	open LIST, "$param{USE_SUBSET}";
+	my @list = <LIST>;
+	chomp @list;
+	@subset{@list} = @list;
+    }
+
+    if($param{USE_META} == 1){
+	$meta_option = "-meta";
+    }else{
+	$meta_option = "";
+    }
+
+
+    my @gene_files = <$param{EQTL_DATA}>;
+    $grid_file = $param{GRID_FILE};
+    open OUT, ">batch_ga.cmd";
+
+
+
+    if(!defined($param{GA_DIR})){
+	$param{GA_DIR} =  './';
+    }
+    if (! -d $param{GA_DIR}){
+	`mkdir $param{GA_DIR}`;
+    }
+
+    
+    foreach $f (@gene_files){
+	$f =~ /(ENSG\d+)\./;
+	my $gene = $1;
+	next if($use_subset && !defined($subset{$gene}));
+	print OUT "sbams_sslr -d $f -g $grid_file -ga -n $gene $meta_option > $param{GA_DIR}/$gene.ga.rst\n";
+    }
+    
+
+}
+
+
+
+
+sub prep_hm {
+    
+    $use_subset = 0;
+    if(-r $param{USE_SUBSET}){
+	$use_subset = 1;
+	open LIST, "$param{USE_SUBSET}";
+	my @list = <LIST>;
+	chomp @list;
+	@subset{@list} = @list;
+    }
+
+
+    if($param{USE_META} == 1){
+	$meta_option = "-meta";
+    }else{
+        $meta_option = "";
+    }
+
+
+    
+    my @gene_files = <$param{EQTL_DATA}>;
+    $grid_file = $param{GRID_FILE};
+    open OUT, ">batch_hm.cmd";
+
+
+    if(!defined($param{HM_DIR})){
+	$param{HM_DIR} =  './';
+    }
+    if (! -d $param{HM_DIR}){
+	`mkdir $param{HM_DIR}`;
+    }
+
+    
+    foreach $f (@gene_files){
+	$f =~ /(ENSG\d+)\./;
+	my $gene = $1;
+	next if($use_subset && !defined($subset{$gene}));
+	print OUT "sbams_sslr -d $f -g $grid_file -prep_hm  -n $gene $meta_option > $param{HM_DIR}/$gene.hm.in\n";
+    }
+
+
+
+	
+
+}
+
+
+
+
+
+
+
+sub fine_mapping {
+    
+    $use_subset = 0;
+    if(-r $param{USE_SUBSET}){
+	$use_subset = 1;
+	open LIST, "$param{USE_SUBSET}";
+	my @list = <LIST>;
+	chomp @list;
+	@subset{@list} = @list;
+    }
+
+    
+    if($param{USE_META} == 1){
+	$meta_option = "-meta";
+    }else{
+        $meta_option = "";
+    }
+
+       
+    if(-r $param{PRIOR_FILE}){
+	$prior_option = "-p $param{PRIOR_FILE}";
+    }else{
+	$prior_option ="";
+    }
+
+
+
+
+    my @gene_files = <$param{EQTL_DATA}>;
+    $grid_file = $param{GRID_FILE};
+    open OUT, ">batch_fm.cmd";
+
+
+    if(!defined($param{FM_DIR})){
+	$param{FM_DIR} =  './';
+    }
+    if (! -d $param{FM_DIR}){
+	`mkdir $param{FM_DIR}`;
+    }
+
+ 
+
+    foreach $f (@gene_files){
+	$f =~ /(ENSG\d+)\./;
+	my $gene = $1;
+	next if($use_subset && !defined($subset{$gene}));
+	#print OUT "sbams_sslr -d $f -g $grid_file  $meta_option $prior_option  > $param{FM_DIR}/$gene.fm.rst 2>/dev/null\n";
+	print OUT "sbams_sslr -d $f -g $grid_file  -scan > $param{FM_DIR}/$gene.scan.rst\n";
+    }
+
+
+
+	
+
+}
