@@ -1,0 +1,390 @@
+\documentclass[11pt,fleqn]{article}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{alltt}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{authblk}
+%\usepackage{figcaps}
+\setlength{\textheight}{8.75in}
+\setlength{\textwidth}{6.8in}
+\setlength{\topmargin}{0.0625in}
+\setlength{\headheight}{0.0in}
+\setlength{\headsep}{0.0in}
+\setlength{\oddsidemargin}{-.19in}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.12in}
+
+\onehalfspacing
+
+\newcommand{\av}{\mbox{\boldmath$\alpha$}}
+\newcommand{\dv}{\mbox{\boldmath$\delta$}}
+\newcommand{\ddv}{\mbox{\boldmath$d$}}
+\newcommand{\edv}{\mbox{\boldmath$\epsilon$}}
+\newcommand{\bv}{\mbox{\boldmath$\beta$}}
+\newcommand{\tauv}{\mbox{\boldmath$\tau$}}
+\newcommand{\bbv}{\tilde \bv}
+\newcommand{\bev}{\mbox{\boldmath$b$}}
+\newcommand{\ev}{\mbox{\boldmath$e$}}
+\newcommand{\tv}{\mbox{\boldmath$\theta$}}
+\newcommand{\fv}{\mbox{\boldmath$f$}}
+\newcommand{\Cv}{\mbox{\boldmath$C$}}
+\newcommand{\Dv}{\mbox{\boldmath$D$}}
+\newcommand{\Fv}{\mbox{\boldmath$F$}}
+\newcommand{\Gv}{\mbox{\boldmath$G$}}
+\newcommand{\Kv}{\mbox{\boldmath$K$}}
+\newcommand{\iv}{\mbox{\boldmath$I$}}
+\newcommand{\vv}{\mbox{\boldmath$v$}}
+\newcommand{\pv}{\mbox{\boldmath$p$}}
+\newcommand{\hv}{\mbox{\boldmath$h$}}
+\newcommand{\gv}{\mbox{\boldmath$g$}}
+\newcommand{\Pv}{\mbox{\boldmath$P$}}
+\newcommand{\Qv}{\mbox{\boldmath$Q$}}
+\newcommand{\Rv}{\mbox{\boldmath$R$}}
+\newcommand{\rv}{\mbox{\boldmath$r$}}
+\newcommand{\Sv}{\mbox{\boldmath$S$}}
+\newcommand{\Sigv}{\mbox{\boldmath$\Sigma$}}
+\newcommand{\qv}{\mbox{\boldmath$q$}}
+\newcommand{\Mv}{\mbox{\boldmath$M$}}
+\newcommand{\mv}{\mbox{\boldmath$\mu$}}
+\newcommand{\Lv}{\mbox{\boldmath$L$}}
+\newcommand{\lav}{\mbox{\boldmath$\lambda$}}
+\newcommand{\Tv}{\mbox{\boldmath$T$}}
+\newcommand{\Xv}{\mbox{\boldmath$X$}}
+\newcommand{\xv}{\mbox{\boldmath$x$}}
+\newcommand{\Uv}{\mbox{\boldmath$U$}}
+\newcommand{\Vv}{\mbox{\boldmath$V$}}
+\newcommand{\yv}{\mbox{\boldmath$y$}}
+\newcommand{\Yv}{\mbox{\boldmath$Y$}}
+\newcommand{\Zv}{\mbox{\boldmath$Z$}}
+\newcommand{\zv}{\mbox{\boldmath$z$}}
+\newcommand{\lv}{\bf{1}}
+\newcommand{\etv}{\mbox{\boldmath$\eta$}}
+\newcommand{\muLS}{\ensuremath{\hat{\mv}}}
+\newcommand{\SigmaLS}{\ensuremath{\hat{\Sigma}}}
+\newcommand{\fvPanel}{\ensuremath{\fv^{\rm panel}}}
+\newcommand{\isa}{\ensuremath{\sigma_a^{-2}}}
+\newcommand{\hbfes}{\ensuremath{\widehat {\rm BF}^{\rm ES}}}
+\newcommand{\hbfee}{\ensuremath{ \widehat {\rm BF}^{\rm EE} }}
+\newcommand{\abfes}{\ensuremath{{\rm ABF^{ES}}}}
+\newcommand{\abfcc}{\ensuremath{{\rm ABF^{CC}}}}
+\newcommand{\abfee}{\ensuremath{{\rm ABF^{EE}}}}
+\newcommand{\hbfesmeta}{\ensuremath{\widehat {{\rm BF}}^{\rm ES}_{\rm av}}}
+\newcommand{\hbfesfix}{\ensuremath{\widehat {{\rm BF}}^{\rm ES}_{\rm fix}}}
+\newcommand{\hbfesmax}{\ensuremath{\widehat {{\rm BF}}^{\rm ES}_{\rm maxH}}}
+\newcommand{\abfesc}{\ensuremath{{\rm A^*BF^{ES}}}}
+\newcommand{\bfa}{\ensuremath{{\rm BF}}}
+
+
+
+\author{Xiaoquan Wen, Matthew Stephens}
+
+
+
+
+\title{Documentation for Software Package FMeQTL}
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+ aa
+
+\subsection{Method Overview}
+
+ aa
+
+\begin{enumerate}
+\item aa
+
+\item aa
+
+
+
+\item aa
+  
+\item aa
+
+\end{enumerate}
+
+aa
+
+\subsection{Citations}
+
+aa
+
+\newpage
+
+\section{Installation}
+
+% from MeSH document - start 
+We provide pre-compiled binary executables for some UNIX based operating systems. Alternatively, one can directly download the source code and compile the desired binary executable. 
+
+To do so, a GNU C++ compiler,e.g. GNU g++, and GNU Scientific Library (GSL) are required. To download and install GSL on your system, please refer to http://www.gnu.org/gsl/ for details.
+
+% from MeSH documetn - end
+
+\newpage  
+
+
+\section{Input Files}
+ FMeQTL requires the following five files as initial input :  
+\begin{itemize}
+ 	\item genotype information file, 
+ 	\item phenotype information file, expression level after adjusting possible confounders
+ 	\item map file that has information on gene/SNP position
+ 	\item subgroup file that has sample IDs and group information of sample
+ 	\item grid file that has prior values of heterogeneity among subgroups and average effect size.
+\end{itemize}
+\subsection{Data File Format}
+\subsubsection{Genotype Information File}
+ The file having genotype information should be separated by white-space or tabs. The first row is assumed to have sample IDs, which are corresponding to IDs in a phenotype information file and a subgroup file. After the first line, each row should contain genotype dosages for each SNP. The first entry of a row denotes SNP's name, which is same with one in maps file. The following entries can take values in numerical or decimal form, while $NA$ indicates a missing value. Missing values will be imputed by the mean of each SNP, but more sophisticated imputation beforehand is strongly recommended.
+ The following is the example of genotype information file :
+ \begin{alltt}
+	ID id001 id002 id003 id004 id005 \(\cdots\)
+	snp01 0 0 2 1 NA  \(\cdots\)
+	snp02 NA 0.5 1.5 2.0 1.0  \(\cdots\)
+	\(\cdots\)
+ \end{alltt}
+ FMeQTL can take either uncompressed or compressed file with gzip (filename extension is ".gz") as input. Also, separated genotype files for each chromosome are recommended. 
+\subsubsection{Phenotype Information File}
+ The phenotype information file is also assumed to be space or tab-delimited, and the sample IDs' are located at the first row. The followings contains expression levels of one gene per each row and the first column consists of genes' name. Expression levels are expected to be adjusted by possible confounders and appropriately transformed to return valid results. Also, files can be separated by each subgroup.
+ Same with genotype information file, missing values can be denoted by $NA$ and the mean imputation will be performed. However, it is still recommended to handle missing data before using FMeQTL.
+ The example of phenotype information file is as follows :
+ \begin{alltt}
+	ID id001 id002 id003 id004 id005 \(\cdots\)
+	gene01 -0.8414491 -1.4945668  0.1981837  NA -1.8755480  \(\cdots\)
+	gene02 0.9864335 -0.2313034 NA -0.3701193 -2.1197308  \(\cdots\)
+	\(\cdots\)
+ \end{alltt} 
+\subsubsection{Map File}   
+ Map files for genes and SNPs without a header are required, and they should be separated by chromosome.
+ Both map files for genes and for SNPs are required 3 columns : gene name (SNP name), chronosome and basepair position. For each gene(SNP), only one position must be assigned. For position of genes, using the transcription start sites of genes are recommended.
+ \begin{alltt}
+<Example of a map file for genes>
+	gene01 chr1 100000
+	gene02 chr1 100050
+	gene03 chr1 100070
+	\(\cdots\)
+<Example of a map file for SNPs>
+	snp01 chr1 100003
+	snp02 chr1 100057
+	snp03 chr1 100081
+	\(\cdots\)
+ \end{alltt} 
+\subsubsection{Subgroup File}
+ Subgroup file should have 2 columns and no header. The first column must have sample IDs in genotype information file and phenotype information file, but the order of ID does not need to be the same with them. The second one has subgroup information.
+ \begin{alltt}	
+	id001 group01
+	id002 group02
+	id003 group03
+	\(\cdots\)
+ \end{alltt}
+\subsection{Grid File}
+% Copy from MeSH document - need to modify later!
+The grid file contains prior specifications for various prior models. In all cases, the grid file always contains a two-column data matrix: the first column always represents the heterogeneity parameter ($\phi$ in ES, $\psi$ in EE and $k$ in CEF-ES and CEF-EE models) and the second column is used to specify the average effect size parameter ($\omega$ in ES and CEF-ES, $w$ in EE and CEF-EE models). Each row of the grid data matrix provides a unique prior model and different rows  can be used to describe different prior heterogeneity levels and/or prior average effect sizes. The program produces a final Bayes factor by averaging over all the prior models provided.   
+
+The following sample of the grid file is used by \cite{Wen2012} to perform multiple-population eQTL analysis. The grid assumes an ES model and uses five levels of overall prior effects ($\sqrt{\omega^2 + \phi^2} = 0.1,0.2,0.4,0.8,1.6$ values and seven degrees of heterogeneity ($\phi^2/\omega^2 = 0, 1/4,1/2,1,2,4,\infty$), which provides a comprehensive coverage of many possible scenarios. The order of the grid can be arbitrary. 
+\begin{verbatim}
+0.0000  0.1000
+0.1000  0.0000
+0.0707  0.0707
+0.0577  0.0816
+0.0816  0.0577
+0.0447  0.0894
+0.0894  0.0447
+0.0000  0.2000
+0.2000  0.0000
+0.1414  0.1414
+0.1155  0.1633
+0.1633  0.1155
+0.0894  0.1789
+0.1789  0.0894
+0.0000  0.4000
+0.4000  0.0000
+0.2828  0.2828
+0.2309  0.3266
+0.3266  0.2309
+0.1789  0.3578
+0.3578  0.1789
+0.0000  0.8000
+0.8000  0.0000
+0.5657  0.5657
+0.4619  0.6532
+0.6532  0.4619
+0.3578  0.7155
+0.7155  0.3578
+0.0000  1.6000
+1.6000  0.0000
+1.1314  1.1314
+0.9238  1.3064
+1.3064  0.9238
+0.7155  1.4311
+1.4311  0.7155
+\end{verbatim}
+\newpage
+
+\section{Data Preparation}
+ Once all files in "Input file" section has been prepared, FMeQTL provides way to assemble data for each gene, which consists SNPs in \textit{cis}-region of the gene. These can be done with the following commands in Unix or Linux shell such as bash or tch.
+\subsection{Pick {\textit{\textbf{cis}}}-SNPs for each gene}
+ The following line makes a command file called "{\tt batch\_cis.cmd}" in the current directory. 
+ \begin{alltt}
+ run_sbams -p myparameters01.txt -cis_def
+ {\color{red} in "bash" this is fine, but need to run "./run_sbams" in "tcsh"} 
+ \end{alltt}
+ {\tt myparameters01.txt} takes the following lines as parameters. One line should only contain only one parameter.
+ \begin{alltt}
+ <Contents of myparameters01.txt>
+ SBAMS_BIN /net/home/fmeqtl
+ #CLUSTER_MODE batch
+ CIS_RD 200000
+ GENE_MAP /net/home/gene_map/chr*.gene.map
+ SNP_MAP /net/home/gene_map/chr*.snp.map
+ CIS_DEF_DIR /net/home/cis_map/
+ \end{alltt}
+ \begin{itemize}
+ 	\item {\tt SBAMS\_BIN} : specification of the directory that FMeQTL has been installed. {\color{red} not required at this stage?}
+ 	\item {\tt CLUSTER\_MODE} : {\color{red} add later}
+ 	\item {\tt CIS\_RD} : definition of \textit{cis}-region in the unit of basepair(bp). Any SNP located within $\pm$value in this parameter will be picked and saved as \textit{cis}-SNP.
+ 	\item {\tt GENE\_MAP} : specification of map file for genes. Wildcard character is allowed when multiple chromosomes are handled simultaneously.
+ 	\item {\tt SNP\_MAP} : specification of map file for SNPs. Same as {\tt GENE\_MAP} parameter, wildcard character is allowed.
+ 	\item {\tt CIS\_DEF\_DIR} : specification of the directory that saves the output files, which saves \textit{cis}-pairs of SNP and gene. If the directory does not exist, then the program will automatically make one. 	
+ \end{itemize}
+ "{\tt batch\_cis.cmd}" has command lines that can run jobs in parallel. Each command reads position information from map files, and saves the list of genes and corresponding \textit{cis}-SNPs in new files separated by each chromosome. The names of output files are in form of "chr*.cis.snp".
+ {\color{red} add example - but it should be quite different depends on system....?}
+\subsection{Assemble File For Analysis}
+ After picking \textit{cis}-SNPs, genotype and phenotype information need to be merged and reassembled, so each file only contains phenotype information of one gene and genotype information of the corresponding \textit{cis}-SNPs.
+ The following command produces a file called "{\tt batch\_assemble.cmd}".
+ \begin{alltt}
+ run_sbams -p myparameters02.txt -assemble
+ {\color{red} in "bash" this is fine, but need to run "./run_sbams" in "tcsh"} 
+ \end{alltt}
+ {\tt myparameters02.txt} takes the following lines as parameters. One line should only contain only one parameter, same as {\tt myparameters01.txt}
+ \begin{alltt}
+ <Contents of myparameters02.txt>
+ SBAMS_BIN /net/home/fmeqtl {\color{red} no need?}
+ #CLUSTER_MODE batch
+ CIS_DEF_MAP /net/home/cis_map/chr*.cis.map
+ EXPR_DATA /net/home/gene_map/exp.*.dat
+ GENO_DATA /net/home/gene_map/geno.chr*.gz
+ SUBGRP_DEF /net/home/cis_map/all.id
+ ASSEMBLE_DIR /net/home/files_for_analysis
+ \end{alltt}
+ \begin{itemize}
+ 	\item {\tt CIS\_DEF\_MAP} : specification of files that defines \textit{cis}-regions. This file should be generated from the previous step. Wildcard character is allowed to denote multiple chromosomes.
+ 	\item {\tt EXPR\_DATA} : specification of phenotype information file. Wildcard character can be used to indicate several subgroups. Variables in wildcard character should be the same with subgroup names in {\tt SUBGRP\_DEF}.
+ 	\item {\tt GENO\_DATA} : specification of genotype information file. Wildcard character can denote multiple chromosomes. 
+ 	\item {\tt SUBGRP\_DEF} : specification of subgroup file.
+ 	\item {\tt ASSEMBLE\_DIR} : specification of the directory that saves the output files. If the directory does not exist, then the program will automatically make one. 	
+ \end{itemize}
+ "{\tt batch\_assemble.cmd}" has command lines that can assemble files that are ready to be used in FMeQTL. The names of output files are in form of "\textit{genename}.dat", and internal format looks like this :
+ \begin{alltt}
+ <Contents of gene01.dat>
+ pheno gene01 group01 -0.8414491 -1.4945668  0.1981837 \(\cdots\)
+ pheno gene01 group01 0.2074784 -1.8755480  0.9864335 \(\cdots\)
+ pheno gene01 group01 -0.2313034 -0.9277150 -0.3701193 \(\cdots\)
+ geno snp01 group01 0 1 2 \(\cdots\)
+ geno snp01 group02 1 2 0 \(\cdots\)
+ geno snp01 group03 1 1 0 \(\cdots\)
+ geno snp02 group01 2 0 1 \(\cdots\)
+ geno snp02 group02 0 0 1 \(\cdots\)
+ geno snp02 group03 0 2 0 \(\cdots\)
+ \(\cdots\)
+ \end{alltt}
+ {\color{red} ?possible to run both steps in one command file?}
+\newpage
+\section{Running Program}
+\subsection{Gene-level Analysis}
+ FMeQTL can perform gene-level analysis, which also requires for fine-mapping analysis. Results of gene-level analysis will provides the most significant eQTL and the corresponding Bayes Factor, as well as the posterior probability and Bayes factor of the gene. 
+ The command line below will generates a command file called "{\tt batch\_ga.cmd}" in the current directory.
+ \begin{alltt}
+ run_sbams -p myparameters03.txt -ga
+ {\color{red} in "bash" this is fine, but need to run "./run_sbams" in "tcsh"}
+ {\color{red} commands in batch_ga.cmd also has same issue - maybe need to generate "./sbams_sslr" when shell is tcsh}
+ \end{alltt}
+ The example of {\tt myparameters03.txt} are as follows :
+  \begin{alltt}
+ <Contents of  myparameters03.txt>
+ SBAMS_BIN /net/home/fmeqtl {\color{red} changing this part does not change batch_ga.cmd}
+ #CLUSTER_MODE batch
+ EQTL_DATA /net/home/files_for_analysis/*.dat
+ GRID_FILE /net/home/grid  {\color{red} any default grid file?}
+ GA_DIR    /net/home/ga_results
+ \end{alltt}
+ \begin{itemize}
+ 	\item {\tt EQTL\_DATA} : specification of assembled files, generated by running "{\tt batch\_assemble.cmd}" in the previous step. Wildcard denotes names of gene.
+ 	\item {\tt GRID\_FILE} : specification of grid file having prior values of subgroup heterogeneity and average effect size.
+ 	\item {\tt GA\_DIR} : specification of directory for output files. If the directory does not exist, then the program will automatically make one. 
+ \end{itemize}
+ 
+ Running "{\tt batch\_ga.cmd}" performs association analyses in gene level and generates  an output file for each gene called "\textit{genename}.ga.rst" in the output directory. The output file has the following format.
+   \begin{alltt}
+   <Contents of  gene01.ga.rst>
+   {\color{red} change header later / second column means...?}
+   gene	?	bf_gene	pos_prob	most_sig_snp	bf_snp	
+   gene01 1065	13.420	0.8	snp02	15.211	
+   \end{alltt}
+
+% from original MeSH documents - need to remove later
+
+\subsection{Program Parameters}
+
+The program parameters listed in this section should be provided in the command line.
+
+\subsubsection{Input/Output Options}
+
+\begin{itemize}
+  \item {\it -d data\_file}: required, specification of the data file.
+  \item {\it -g grid\_file}: required, specification of the grid file.
+  \item {\it -o output\_file}: optional, specification of the output file. By default, the program output goes to screen.
+  \item {\it -format $1\,|\,2$}: optional, specification of the data file format, numerical values 1 and 2 refer to complete information format I and II, respectively. The default value is 1.
+  \item {\it -min\_info}: optional, indicating the data file is in minimum information format. With this option specified, the default prior model also changes to EE and the Bayes factors are computed based on analytic approximation.
+ \end{itemize}
+ 
+\subsubsection{Model Options}
+
+
+
+\begin{itemize}
+  \item {\it -es $|$ -ee $|$ -cef\_es $|$ -cef\_ee }: optional, specification of the prior model. By default, ES model is assumed. Note, when {\it -min\_info} option is set, i.e., the data file is in minimum information format, only the EE ({\it -ee}) and the CEF\_EE ({\it -cef\_ee}) models are eligible. 
+  
+ \item {\it -abf}: optional, specification of the algorithm to compute Bayes factors. By default, this flag is NOT set, and the numerical optimization based Laplace method is used. If the flag is set, the Bayes factors are computed using analytic approximations (also by Laplace method). When {\it -min\_info} option is set, this option is automatically set. 
+  
+ \item {\it -use\_config}: optional.  If this flag is set, the genetic association in each subgroup is modeled as either ``active" ($\beta_s \ne 0$) or ``silent" ($\beta_s = 0$), an scenario quite useful in some cases of gene-environment interactions. For $s$ given subgroups, the program computes Bayes factors for all $2^s - 1$ possible configurations. Some useful applications of this model can be found in \cite{Wen2012, Flutre2012}. 
+    
+  
+\end{itemize}
+ 
+\subsubsection{Miscellaneous Options}
+ 
+\begin{itemize}
+  \item {\it -no\_adjust}: optional. This option is used with {\it -abf} option, by default, the analytic approximation of Bayes factors adjusts for small sample sizes (recommended) and makes the results more accurate. Setting this flag avoids the adjustment, this flag is automatically set when ``{\it min\_info}" flag is automatically set. (in such case, there is no enough information to perform the adjustment). 
+  \item {it -print\_subgrp}: optional. When this flag is set, the program outputs summary statistics for each individual subgroups, namely $\hat \beta$ and ${\rm se}(\hat \beta)$. 
+  \item {\it -prep\_hm}: optional. When this option is specified, the program prepares input Bayes factors suitable for the Hierarchical models implemented in software packages eqtlbma and bridge.  
+\end{itemize} 
+
+
+
+\subsection{Output from Program}
+
+In the simplest case, the program outputs the Bayes factor for each SNP included in the data file in each line. If ``{\it -print\_subgrp}" option is specified, following the Bayes factor result, $\hat \beta$ and ${\rm se}(\hat \beta)$ for each subgroup are also displayed.
+
+By default, the results are displayed on screen (stdout). If ``-output\_file" is specified, all the results are recorded in the specified output file.
+
+
+\newpage
+\begin{thebibliography}{5} % 100 is a random guess of the total number of 
+%references
+\bibitem{Wen2012} Wen, X. and Stephens, M. ``Bayesian Methods for Genetic Association Analysis with Heterogeneous Subgroups: from Meta-Analyses to Gene-Environment Interactions" \emph{arXiv pre-print: 1111.1210}
+\bibitem{Flutre2012} Flutre, T., Wen, X., Pritchard, JK and Stephens, M. ``A Statistical Framework for Joint eQTL Analysis in Multiple Tissues" \emph{PLoS Genetics (in press)}
+\end{thebibliography}
+
+
+
+
+\end{document}
