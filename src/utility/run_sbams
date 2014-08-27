@@ -103,7 +103,7 @@ sub def_cis_snp{
 	$param{CIS_DEF_DIR} =  './';
     }
     if (! -d $param{CIS_DEF_DIR}){
-	`mkdir $param{CIS_DEF_DIR}`;
+	`mkdir -p $param{CIS_DEF_DIR}`;
     }
     
 
@@ -133,7 +133,7 @@ sub assemble {
 	$param{ASSEMBLE_DIR} =  './';
     }
     if (! -d $param{ASSEMBLE_DIR}){
-	`mkdir $param{ASSEMBLE_DIR}`;
+	`mkdir -p $param{ASSEMBLE_DIR}`;
     }
     
     open OUT, ">batch_assemble.cmd";
@@ -189,7 +189,7 @@ sub gene_level_analysis {
 	$param{GA_DIR} =  './';
     }
     if (! -d $param{GA_DIR}){
-	`mkdir $param{GA_DIR}`;
+	`mkdir -p $param{GA_DIR}`;
     }
 
     
@@ -235,7 +235,7 @@ sub prep_hm {
 	$param{HM_DIR} =  './';
     }
     if (! -d $param{HM_DIR}){
-	`mkdir $param{HM_DIR}`;
+	`mkdir -p $param{HM_DIR}`;
     }
 
     
@@ -295,7 +295,7 @@ sub fine_mapping {
 	$param{FM_DIR} =  './';
     }
     if (! -d $param{FM_DIR}){
-	`mkdir $param{FM_DIR}`;
+	`mkdir -p $param{FM_DIR}`;
     }
 
  
