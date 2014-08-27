@@ -245,6 +245,9 @@ void controller::gene_level_analysis(){
   double max_snp_abf = -9999;
   string max_snp;
 
+  fprintf(outfd,"Gene\tnum_of_cis_SNPs\tgene_level_log10_BF\ttop_SNP\ttop_SNP_log10_BF\n");
+
+
   for(int i=0;i<p;i++){
 
     SNP snp(pars.geno_map[i],i);
@@ -285,7 +288,7 @@ void controller::gene_level_analysis(){
   double gene_pi0 = pow(pi_vec[0],p);
   double gene_post_prob = gene_abf*(1-gene_pi0)/(gene_pi0+  gene_abf*(1-gene_pi0));
   
-  fprintf(outfd,"%s\t%d\t%7.3f\t%7.4f\t%s\t%7.3f\n",gene.c_str(),p,gene_log10_abf,gene_post_prob,max_snp.c_str(),max_snp_abf);
+  fprintf(outfd,"%s\t%d\t%7.3f\t%s\t%7.3f\n",gene.c_str(),p,gene_log10_abf,max_snp.c_str(),max_snp_abf);
   
 
 }
