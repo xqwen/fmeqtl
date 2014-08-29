@@ -4,6 +4,7 @@ $expr_file = $ARGV[2];
 $geno_file = $ARGV[3];
 $out_dir = $ARGV[4];
 
+
 ################ read subgroup defn file ################
 
 open SUBDEF, "$subgrp_file";
@@ -33,7 +34,7 @@ foreach $k (keys %subs){
 
 
 
-############# read cis define file ##################
+############# read cis defn file ##################
 
 
 open CISDEF, "$cis_file";
@@ -55,7 +56,18 @@ while(<CISDEF>){
 ###################### read expr file ####################
 
 
-@ex_files = <$ARGV[2]>;
+my @ex_files;
+
+if($ARGV[2]=~/\#/){
+    foreach $gp (@grps){
+	my $f = $ARGV[2];
+	$f =~s/\#/$gp/;
+	push @ex_files, $f;
+    }
+}else{
+    push @ex_files, $ARGV[2];
+}
+
 #print "$ARGV[2]\n@ex_files\n";
 foreach $exf (@ex_files){
     
@@ -116,7 +128,19 @@ foreach $exf (@ex_files){
 ###################### read geno file ####################
 
 
-@ge_files = <$ARGV[3]>;
+
+my @ge_files;
+
+if($ARGV[3]=~/\#/){
+    foreach $gp (@grps){
+        my $f = $ARGV[3];
+        $f =~s/\#/$gp/;
+        push @ge_files, $f;
+    }
+}else{
+    push @ge_files, $ARGV[3];
+}
+
 
 foreach $gef (@ge_files){
     

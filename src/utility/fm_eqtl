@@ -1,8 +1,11 @@
 #!/usr/bin/perl
 
-
 parse_args();
+
 read_params($param_file);
+
+
+############ Data pre-processing #################
 
 if($option==2){
     def_cis_snp();
@@ -14,19 +17,31 @@ if($option==3){
     exit;
 }
 
+
+############ Gene-level screening ##################
+
+
 if($option==4){
     gene_level_analysis();
     exit;
 }
+
+
+########### Multiple SNP fine mapping ################
+
 
 if($option==5){
     fine_mapping();
 }
 
 
+########## Accessories/link to other interfaces ############
+
 if($option==6){
     prep_hm();
 }
+
+
 
 sub parse_args{
     
@@ -34,6 +49,12 @@ sub parse_args{
 
     for $i (0..$#ARGV){
 	
+
+	if($ARGV[$i] eq "-help"){
+	    print_usage();
+	    exit;
+	}
+
 	if($ARGV[$i] eq '-p'){
 	    $param_file = $ARGV[++$i];
 	    next;
@@ -62,17 +83,24 @@ sub parse_args{
     
     if(!defined($param_file)){
 	print STDERR "Error: parameter file is not specified\n";
-	
+	print_usage();
 	exit;
     }
 
     if($option == -1){
 	print STDERR "Error: no valid option defined\n";
+	print_usage();
 	exit;
     }
 
 }
     
+
+sub print_usage {
+    
+    print STDERR "\nUsage: fm_eqtl -[cis_def | assemble | ga | fm | prep_hm] -p param_file\n\n";
+}
+
 
 
 sub read_params {
@@ -109,25 +137,58 @@ sub def_cis_snp{
 
 
     open OUT, ">batch_cis.cmd";
-    my $script = $param{SBAMS_BIN}."\/cis_snp.pl";
+    my $script = $param{FMEQTL_BIN}."\/cis_snp.pl";
     if(! -r $script){
 	print STDERR "Error: required script cis_snp.pl can't be read\n";
 	exit;
     }
-    for $chr (1..22){
+
+    
+
+    if($param{SNP_MAP} =~ /\*/){
+	for $chr (1..22){
+	    my $gene_map = $param{GENE_MAP};
+	    $gene_map=~s/\*/$chr/;
+	    my $snp_map = $param{SNP_MAP};
+	    $snp_map=~s/\*/$chr/;
+	    
+	    next if (! -e "$snp_map" || ! -e "$gene_map");
+	    $out = "$param{CIS_DEF_DIR}\/chr$chr.cis.snp";
+	    print OUT "perl $script $gene_map  $snp_map $param{CIS_RD} $out\n";	    
+	}
+    }else{
+	$out = "$param{CIS_DEF_DIR}\/cis.snp";
 	my $gene_map = $param{GENE_MAP};
-	$gene_map=~s/\*/$chr/;
 	my $snp_map = $param{SNP_MAP};
-	$snp_map=~s/\*/$chr/;
-	$out = "$param{CIS_DEF_DIR}\/chr$chr.cis.snp";
-	print OUT "perl $script $gene_map  $snp_map $param{CIS_RD} $out\n";
-	
+	print OUT "perl $script $gene_map $snp_map $param{CIS_RD} $out\n";
     }
 }
 
 
 sub assemble {
     
+    
+    if(!defined($param{MODEL})){
+	print STDERR "Error: missing MODLE specification (MVLR or SSLR)\n\n";
+	exit;
+    }
+    
+    my $script = $param{FMEQTL_BIN};
+    $param{MODEL} =~tr/a-z/A-Z/;
+    
+    if($param{MODEL} eq "SSLR"){
+	$script .= "\/assemble_sslr.pl";
+    }elsif($param{MODEL} eq "MVLR"){
+	$script .= "\/assemble_mvlr.pl";
+    }else{
+	print STDERR "Error: unknown MODELT specification. MODEL should be either MVLR or SSLR. \n";
+	exit;
+    }
+	
+
+
+
+
     my $subgrp_file = $param{SUBGRP_DEF};
     if(!defined($param{ASSEMBLE_DIR})){
 	$param{ASSEMBLE_DIR} =  './';
@@ -137,20 +198,19 @@ sub assemble {
     }
     
     open OUT, ">batch_assemble.cmd";
-    my $script = $param{SBAMS_BIN}."\/assemble_sslr.pl";
-    
+
+   
 
     for $chr (1..22){
 	my $cis_file = $param{CIS_DEF_MAP};
 	my $geno_data = $param{GENO_DATA}; # may contain wildcard for chromosomes, wildcard handled here
+	
 	$cis_file =~s/\*/$chr/;
 	$geno_data =~s/\*/$chr/;
+	next if (! -e "$cis_file" || ! -e "$geno_data");
 
 	my $expr_data = $param{EXPR_DATA}; # may contain wildcard for subgroups, wildcard should be passed on 
-	
-
-	
-	
+       	
 	#print OUT "perl $script $subgrp_file $cis_file \"$expr_data\" \"$geno_data\" $param{ASSEMBLE_DIR}\n";
 	print OUT "perl $script $subgrp_file $cis_file \'$expr_data\' \'$geno_data\' $param{ASSEMBLE_DIR}\n";
     }
@@ -161,6 +221,23 @@ sub assemble {
 
 	
 sub gene_level_analysis {
+
+
+
+    my $script = $param{FMEQTL_BIN};
+    
+    $param{MODEL} =~tr/a-z/A-Z/;
+    
+    if($param{MODEL} eq "SSLR"){
+	$script .= "\/sbams_sslr";
+    }elsif($param{MODEL} eq "MVLR"){
+	$script .= "\/sbams_mvlr";
+    }else{
+	print STDERR "Error: unknown MODELT specification. MODEL should be either MVLR or SSLR. \n";
+	exit;
+    }
+	
+
 
 
     
@@ -197,7 +274,7 @@ sub gene_level_analysis {
 	$f =~ /(ENSG\d+)\./;
 	my $gene = $1;
 	next if($use_subset && !defined($subset{$gene}));
-	print OUT "sbams_sslr -d $f -g $grid_file -ga -n $gene $meta_option > $param{GA_DIR}/$gene.ga.rst\n";
+	print OUT "$script -d $f -g $grid_file -ga -n $gene $meta_option > $param{GA_DIR}/$gene.ga.rst\n";
     }
     
 
