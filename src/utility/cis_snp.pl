@@ -18,6 +18,7 @@ while(<FILE>){
     next if $_ !~ /\d/;
     my @data = split /\s+/, $_;
     shift @data until $data[0]=~/^\S/;
+    next if $data[-1]=~/\D/;
     $rcd{$data[0]} = {tss => $data[-1]};
     push @list, $data[0];
 }
@@ -37,7 +38,9 @@ while(<FILE>){
     next if $_ !~ /\d/;
     my @data = split /\s+/, $_;
     shift @data until $data[0]=~/^\S/;
+    next if $data[-1]=~/\D/;
     my $pos = $data[-1];
+
     foreach $g (@list){
 	my $diff = $rcd{$g}->{tss}-$pos;
 	last if($diff > $radius);	    

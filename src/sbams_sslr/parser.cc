@@ -34,15 +34,47 @@ void parser::process_line(string line){
 
   vector<double> vecv;
   
-
+  int missing_flag = 0;  // missing data flag 
   while(1){
     char *val = strtok(0, " ");
         
     if(val==0)
       break;
-    vecv.push_back(atof(val));
+    
+    if(strcmp(val,"NA")==0 || strcmp(val,"na")==0){
+      missing_flag = 1;
+      vecv.push_back(-1);
+    }else
+      vecv.push_back(atof(val));
   }
   
+  // impute missing data with mean
+
+  if(missing_flag == 1){
+    
+    double nm_sum = 0;
+    int nm_count = 0;
+    vector<int> iv;
+    for (int i=0;i<vecv.size();i++){
+      if(vecv[i]==-1){
+	iv.push_back(i);
+      }else{
+	nm_sum += vecv[i];
+	nm_count++;
+      }
+    }
+
+    double imp_mean = 0;
+    if(nm_count!=0){
+      imp_mean = nm_sum/nm_count;
+    }
+
+    for(int i=0;i<iv.size();i++){
+      vecv[iv[i]] = imp_mean;
+    }
+  }
+      
+
 
   if(strcmp(header,"pheno") == 0||strcmp(header,"response")==0){
     pheno_vec.push_back(vecv);  
