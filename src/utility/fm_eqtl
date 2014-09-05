@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+use Cwd 'abs_path';
+
 parse_args();
 
 read_params($param_file);
@@ -137,7 +139,7 @@ sub def_cis_snp{
 
 
     open OUT, ">batch_cis.cmd";
-    my $script = $param{FMEQTL_BIN}."\/cis_snp.pl";
+    my $script = abs_path($param{FMEQTL_BIN}."\/cis_snp.pl");
     if(! -r $script){
 	print STDERR "Error: required script cis_snp.pl can't be read\n";
 	exit;
@@ -147,19 +149,21 @@ sub def_cis_snp{
 
     if($param{SNP_MAP} =~ /\*/){
 	for $chr (1..22){
-	    my $gene_map = $param{GENE_MAP};
+	    my $gene_map = abs_path($param{GENE_MAP});
 	    $gene_map=~s/\*/$chr/;
-	    my $snp_map = $param{SNP_MAP};
+	    my $snp_map = abs_path($param{SNP_MAP});
 	    $snp_map=~s/\*/$chr/;
-	    
+
 	    next if (! -e "$snp_map" || ! -e "$gene_map");
-	    $out = "$param{CIS_DEF_DIR}\/chr$chr.cis.snp";
+	    $out = abs_path("$param{CIS_DEF_DIR}\/chr$chr.cis.snp");
+
 	    print OUT "perl $script $gene_map  $snp_map $param{CIS_RD} $out\n";	    
 	}
     }else{
-	$out = "$param{CIS_DEF_DIR}\/cis.snp";
-	my $gene_map = $param{GENE_MAP};
-	my $snp_map = $param{SNP_MAP};
+	$out = abs_path("$param{CIS_DEF_DIR}\/cis.snp");
+	my $gene_map = abs_path($param{GENE_MAP});
+	my $snp_map = abs_path($param{SNP_MAP});
+ 
 	print OUT "perl $script $gene_map $snp_map $param{CIS_RD} $out\n";
     }
 }
@@ -189,7 +193,7 @@ sub assemble {
 
 
 
-    my $subgrp_file = $param{SUBGRP_DEF};
+    my $subgrp_file = abs_path($param{SUBGRP_DEF});
     if(!defined($param{ASSEMBLE_DIR})){
 	$param{ASSEMBLE_DIR} =  './';
     }
@@ -202,17 +206,18 @@ sub assemble {
    
 
     for $chr (1..22){
-	my $cis_file = $param{CIS_DEF_MAP};
-	my $geno_data = $param{GENO_DATA}; # may contain wildcard for chromosomes, wildcard handled here
+	my $cis_file = abs_path($param{CIS_DEF_MAP});
+	my $geno_data = abs_path($param{GENO_DATA}); # may contain wildcard for chromosomes, wildcard handled here
 	
 	$cis_file =~s/\*/$chr/;
 	$geno_data =~s/\*/$chr/;
 	next if (! -e "$cis_file" || ! -e "$geno_data");
 
-	my $expr_data = $param{EXPR_DATA}; # may contain wildcard for subgroups, wildcard should be passed on 
+	my $expr_data = abs_path($param{EXPR_DATA}); # may contain wildcard for subgroups, wildcard should be passed on
+    my $assemble_out = abs_path($param{ASSEMBLE_DIR});
        	
 	#print OUT "perl $script $subgrp_file $cis_file \"$expr_data\" \"$geno_data\" $param{ASSEMBLE_DIR}\n";
-	print OUT "perl $script $subgrp_file $cis_file \'$expr_data\' \'$geno_data\' $param{ASSEMBLE_DIR}\n";
+	print OUT "perl $script $subgrp_file $cis_file \'$expr_data\' \'$geno_data\' $assemble_out\n";
     }
 }
 
@@ -224,7 +229,7 @@ sub gene_level_analysis {
 
 
 
-    my $script = $param{FMEQTL_BIN};
+    my $script = abs_path($param{FMEQTL_BIN});
     
     $param{MODEL} =~tr/a-z/A-Z/;
     
@@ -257,7 +262,7 @@ sub gene_level_analysis {
 
 
     my @gene_files = <$param{EQTL_DATA}>;
-    $grid_file = $param{GRID_FILE};
+    $grid_file = abs_path($param{GRID_FILE});
     open OUT, ">batch_ga.cmd";
 
 
@@ -274,7 +279,10 @@ sub gene_level_analysis {
 	$f =~ /(ENSG\d+)\./;
 	my $gene = $1;
 	next if($use_subset && !defined($subset{$gene}));
-	print OUT "$script -d $f -g $grid_file -ga -n $gene $meta_option > $param{GA_DIR}/$gene.ga.rst\n";
+    
+    my $ga_out=abs_path($param{GA_DIR});
+    
+	print OUT "$script -d $f -g $grid_file -ga -n $gene $meta_option > $ga_out/$gene.ga.rst\n";
     }
     
 
@@ -304,7 +312,7 @@ sub prep_hm {
 
     
     my @gene_files = <$param{EQTL_DATA}>;
-    $grid_file = $param{GRID_FILE};
+    $grid_file = abs_path($param{GRID_FILE});
     open OUT, ">batch_hm.cmd";
 
 
@@ -320,7 +328,8 @@ sub prep_hm {
 	$f =~ /(ENSG\d+)\./;
 	my $gene = $1;
 	next if($use_subset && !defined($subset{$gene}));
-	print OUT "sbams_sslr -d $f -g $grid_file -prep_hm  -n $gene $meta_option > $param{HM_DIR}/$gene.hm.in\n";
+    my $hm_out = abs_path($param{HM_DIR});
+	print OUT "sbams_sslr -d $f -g $grid_file -prep_hm  -n $gene $meta_option > $hm_out/$gene.hm.in\n";
     }
 
 
@@ -364,7 +373,7 @@ sub fine_mapping {
 
 
     my @gene_files = <$param{EQTL_DATA}>;
-    $grid_file = $param{GRID_FILE};
+    $grid_file = abs_path($param{GRID_FILE});
     open OUT, ">batch_fm.cmd";
 
 
@@ -382,7 +391,8 @@ sub fine_mapping {
 	my $gene = $1;
 	next if($use_subset && !defined($subset{$gene}));
 	#print OUT "sbams_sslr -d $f -g $grid_file  $meta_option $prior_option  > $param{FM_DIR}/$gene.fm.rst 2>/dev/null\n";
-	print OUT "sbams_sslr -d $f -g $grid_file  -scan > $param{FM_DIR}/$gene.scan.rst\n";
+    my $fm_out = abs_path($param{FM_DIR});
+	print OUT "sbams_sslr -d $f -g $grid_file  -scan > $fm_out/$gene.scan.rst\n";
     }
 
 
