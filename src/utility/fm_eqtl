@@ -1,22 +1,25 @@
 #!/usr/bin/perl
 
 use Cwd 'abs_path';
+use POSIX; 
 
 parse_args();
 
 read_params($param_file);
 
 
+@output=();
+
 ############ Data pre-processing #################
 
 if($option==2){
     def_cis_snp();
-    exit;
+
 }
 
 if($option==3){
     assemble();
-    exit;
+
 }
 
 
@@ -25,7 +28,7 @@ if($option==3){
 
 if($option==4){
     gene_level_analysis();
-    exit;
+
 }
 
 
@@ -42,6 +45,9 @@ if($option==5){
 if($option==6){
     prep_hm();
 }
+
+print_output($key);
+
 
 
 
@@ -64,22 +70,27 @@ sub parse_args{
 
 	if($ARGV[$i] eq "-cis_def"){
 	    $option = 2;
+	    $key = "cis";
 	}
 
 	if($ARGV[$i] eq "-assemble"){
 	    $option = 3;
+	    $key = "assemble";
 	}
 	
 	if($ARGV[$i] eq "-ga"){
 	    $option = 4;
+	    $key = "ga";
 	}
 	
 	if($ARGV[$i] eq "-fine_mapping" || $ARGV[$i] eq "-fm" ){
 	    $option = 5;
+	    $key = "fm";
 	}
 
-	if($ARGV[$i] eq "-prep_hm"){
+	if($ARGV[$i] eq "-prep_hm" || $ARGV[$i] eq "-prep_eqtlbma"){
 	    $option = 6;
+	    $key = "eqtlbma";
 	}
     }
     
@@ -136,9 +147,9 @@ sub def_cis_snp{
 	`mkdir -p $param{CIS_DEF_DIR}`;
     }
     
-
-
-    open OUT, ">batch_cis.cmd";
+    
+    
+    #open OUT, ">batch_cis.cmd";
     my $script = abs_path($param{FMEQTL_BIN}."\/cis_snp.pl");
     if(! -r $script){
 	print STDERR "Error: required script cis_snp.pl can't be read\n";
@@ -157,14 +168,16 @@ sub def_cis_snp{
 	    next if (! -e "$snp_map" || ! -e "$gene_map");
 	    $out = abs_path("$param{CIS_DEF_DIR}\/chr$chr.cis.snp");
 
-	    print OUT "perl $script $gene_map  $snp_map $param{CIS_RD} $out\n";	    
+	    #print OUT "perl $script $gene_map  $snp_map $param{CIS_RD} $out\n";	    
+	    push @output, "perl $script $gene_map  $snp_map $param{CIS_RD} $out\n";	    
 	}
     }else{
 	$out = abs_path("$param{CIS_DEF_DIR}\/cis.snp");
 	my $gene_map = abs_path($param{GENE_MAP});
 	my $snp_map = abs_path($param{SNP_MAP});
  
-	print OUT "perl $script $gene_map $snp_map $param{CIS_RD} $out\n";
+	#print OUT "perl $script $gene_map $snp_map $param{CIS_RD} $out\n";
+	push @output, "perl $script $gene_map  $snp_map $param{CIS_RD} $out\n";	    
     }
 }
 
@@ -201,7 +214,7 @@ sub assemble {
 	`mkdir -p $param{ASSEMBLE_DIR}`;
     }
     
-    open OUT, ">batch_assemble.cmd";
+    #open OUT, ">batch_assemble.cmd";
 
    
 
@@ -214,10 +227,11 @@ sub assemble {
 	next if (! -e "$cis_file" || ! -e "$geno_data");
 
 	my $expr_data = abs_path($param{EXPR_DATA}); # may contain wildcard for subgroups, wildcard should be passed on
-    my $assemble_out = abs_path($param{ASSEMBLE_DIR});
+	my $assemble_out = abs_path($param{ASSEMBLE_DIR});
        	
 	#print OUT "perl $script $subgrp_file $cis_file \"$expr_data\" \"$geno_data\" $param{ASSEMBLE_DIR}\n";
-	print OUT "perl $script $subgrp_file $cis_file \'$expr_data\' \'$geno_data\' $assemble_out\n";
+	#print OUT "perl $script $subgrp_file $cis_file \'$expr_data\' \'$geno_data\' $assemble_out\n";
+	push @output, "perl $script $subgrp_file $cis_file \'$expr_data\' \'$geno_data\' $assemble_out\n";
     }
 }
 
@@ -263,7 +277,7 @@ sub gene_level_analysis {
 
     my @gene_files = <$param{EQTL_DATA}>;
     $grid_file = abs_path($param{GRID_FILE});
-    open OUT, ">batch_ga.cmd";
+    #open OUT, ">batch_ga.cmd";
 
 
 
@@ -282,7 +296,9 @@ sub gene_level_analysis {
     
     my $ga_out=abs_path($param{GA_DIR});
     
-	print OUT "$script -d $f -g $grid_file -ga -n $gene $meta_option > $ga_out/$gene.ga.rst\n";
+	#print OUT "$script -d $f -g $grid_file -ga -n $gene $meta_option > $ga_out/$gene.ga.rst\n";
+	push @output, "$script -d $f -g $grid_file -ga -n $gene $meta_option > $ga_out/$gene.ga.rst\n";
+	
     }
     
 
@@ -293,6 +309,22 @@ sub gene_level_analysis {
 
 sub prep_hm {
     
+
+    my $script = abs_path($param{FMEQTL_BIN});
+
+    $param{MODEL} =~tr/a-z/A-Z/;
+
+    if($param{MODEL} eq "SSLR"){
+	$script .= "\/sbams_sslr";
+    }elsif($param{MODEL} eq "MVLR"){
+	$script .= "\/sbams_mvlr";
+    }else{
+	print STDERR "Error: unknown MODELT specification. MODEL should be either MVLR or SSLR. \n";
+        exit;
+    }
+
+
+
     $use_subset = 0;
     if(-r $param{USE_SUBSET}){
 	$use_subset = 1;
@@ -313,7 +345,7 @@ sub prep_hm {
     
     my @gene_files = <$param{EQTL_DATA}>;
     $grid_file = abs_path($param{GRID_FILE});
-    open OUT, ">batch_hm.cmd";
+    #open OUT, ">batch_hm.cmd";
 
 
     if(!defined($param{HM_DIR})){
@@ -329,7 +361,8 @@ sub prep_hm {
 	my $gene = $1;
 	next if($use_subset && !defined($subset{$gene}));
     my $hm_out = abs_path($param{HM_DIR});
-	print OUT "sbams_sslr -d $f -g $grid_file -prep_hm  -n $gene $meta_option > $hm_out/$gene.hm.in\n";
+	#print OUT "sbams_sslr -d $f -g $grid_file -prep_hm  -n $gene $meta_option > $hm_out/$gene.hm.in\n";
+	push @output, "sbams_sslr -d $f -g $grid_file -prep_hm  -n $gene $meta_option > $hm_out/$gene.hm.in\n";
     }
 
 
@@ -345,6 +378,23 @@ sub prep_hm {
 
 
 sub fine_mapping {
+
+
+    my $script = abs_path($param{FMEQTL_BIN});
+    
+    $param{MODEL} =~tr/a-z/A-Z/;
+    
+    if($param{MODEL} eq "SSLR"){
+	$script .= "\/sbams_sslr";
+    }elsif($param{MODEL} eq "MVLR"){
+	$script .= "\/sbams_mvlr";
+    }else{
+	print STDERR "Error: unknown MODELT specification. MODEL should be either MVLR or SSLR. \n";
+        exit;
+    }
+
+
+
     
     $use_subset = 0;
     if(-r $param{USE_SUBSET}){
@@ -374,7 +424,7 @@ sub fine_mapping {
 
     my @gene_files = <$param{EQTL_DATA}>;
     $grid_file = abs_path($param{GRID_FILE});
-    open OUT, ">batch_fm.cmd";
+    #open OUT, ">batch_fm.cmd";
 
 
     if(!defined($param{FM_DIR})){
@@ -391,8 +441,10 @@ sub fine_mapping {
 	my $gene = $1;
 	next if($use_subset && !defined($subset{$gene}));
 	#print OUT "sbams_sslr -d $f -g $grid_file  $meta_option $prior_option  > $param{FM_DIR}/$gene.fm.rst 2>/dev/null\n";
-    my $fm_out = abs_path($param{FM_DIR});
-	print OUT "sbams_sslr -d $f -g $grid_file  -scan > $fm_out/$gene.scan.rst\n";
+	my $fm_out = abs_path($param{FM_DIR});
+	#print OUT "sbams_sslr -d $f -g $grid_file  -scan > $fm_out/$gene.scan.rst\n";
+	#"sbams_sslr -d $f -g $grid_file  -scan > $fm_out/$gene.scan.rst\n";
+	push @output, "$script -d $f -g $grid_file  $meta_option $prior_option  > $param{FM_DIR}/$gene.fm.rst 2>/dev/null\n";
     }
 
 
@@ -400,3 +452,42 @@ sub fine_mapping {
 	
 
 }
+
+
+
+
+sub print_output {
+    
+    my ($key) = @_;
+    $batch = 1;
+    if($param{OUTPUT_BATCH}>1){
+	$batch = $param{OUTPUT_BATCH};
+    }
+    
+    $prefix = "batch_".$key;
+    if($batch == 1){
+	open OUT, ">$prefix.cmd";
+    }else{
+	open OUT, ">$prefix.1.cmd";
+    }
+    
+    my $line = scalar(@output);
+    $num_per_batch = int($line/$batch);
+    
+    $index = 1;
+    $count = 1;
+    for ($i=0;$i<$line;$i++){
+	print OUT $output[$i];
+	$count++;
+	last if $i==$line-1;
+	if($i%$num_per_batch==0){
+	    close OUT;
+	    $count = 1;
+	    $index++;
+	    open OUT, ">$prefix.$index.cmd";
+	}
+    }
+    close OUT;
+}
+    
+    
