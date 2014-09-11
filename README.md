@@ -1,4 +1,4 @@
-# FM-eQTL: FM-eQTL: Software Pipeline for Fine Mapping cis-eQTLs in Multiple Subgroups
+## FM-eQTL: FM-eQTL: Software Pipeline for Fine Mapping cis-eQTLs in Multiple Subgroups
 
 
 
@@ -10,7 +10,7 @@ This software is distributed in the hope that it will be useful, but WITHOUT ANY
 
 
 
-## Compilation and Installation
+### Compilation and Installation
 
 
 Download the whole src/ directory for complete source code.
@@ -23,7 +23,7 @@ To compile the executable, run the following commands from the current directory
 Upon successful compilation, a directory "fmeqtl_bin" containing binary executables and various utility perl scripts should be produced.   
 
 
-## Documentation 
+### Documentation 
 
 A user manual  "fmeqtl.pdf" can be found in doc/ directory
 
