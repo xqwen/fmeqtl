@@ -1,4 +1,4 @@
-## FM-eQTL: FM-eQTL: Software Pipeline for Fine Mapping cis-eQTLs in Multiple Subgroups
+## FM-eQTL: Software Pipeline for Fine Mapping cis-eQTLs in Multiple Subgroups
 
 
 
