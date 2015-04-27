@@ -2,7 +2,7 @@
 
 
 
-This directory contains FM-eQTL, a software package designed to map multiple QTLs using expression and genotype data consisting of one or more subgroups. FM-QTL is a free software, you can redistribute it and/or modify it under the terms of the GNU General Public License.
+This directory contains FM-QTL, a software package designed to map multiple QTLs using expression and genotype data consisting of one or more subgroups. FM-QTL is a free software, you can redistribute it and/or modify it under the terms of the GNU General Public License.
 
 The GNU General Public License does not permit this software to be redistributed in proprietary programs.
 
@@ -20,7 +20,7 @@ To compile the executable, run the following commands from the current directory
      cd src
      make
 ```
-Upon successful compilation, a directory "fmeqtl_bin" containing binary executables and various utility perl scripts should be produced.   
+Upon successful compilation, a directory "fmqtl_bin" containing binary executables and various utility perl scripts should be produced.   
 
 
 ### Documentation 
