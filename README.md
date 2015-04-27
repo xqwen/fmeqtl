@@ -13,7 +13,7 @@ This software is distributed in the hope that it will be useful, but WITHOUT ANY
 ### Compilation and Installation
 
 
-Download the whole src/ directory for complete source code.
+Download the whole "src/" directory for complete source code.
 
 To compile the executable, run the following commands from the current directory:
 ```{shell}
