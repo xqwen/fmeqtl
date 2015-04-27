@@ -1,8 +1,8 @@
-## FM-eQTL: Software Pipeline for Fine Mapping cis-eQTLs in Multiple Subgroups
+## FM-QTL: Software Pipeline for Fine Mapping QTLs in Multiple Subgroups
 
 
 
-This directory contains FM-eQTL, a software package designed to map multiple cis-eQTLs using expression and genotype data consisting of one or more subgroups. FM-eQTL is a free software, you can redistribute it and/or modify it under the terms of the GNU General Public License.
+This directory contains FM-eQTL, a software package designed to map multiple QTLs using expression and genotype data consisting of one or more subgroups. FM-QTL is a free software, you can redistribute it and/or modify it under the terms of the GNU General Public License.
 
 The GNU General Public License does not permit this software to be redistributed in proprietary programs.
 
@@ -25,7 +25,7 @@ Upon successful compilation, a directory "fmeqtl_bin" containing binary executab
 
 ### Documentation 
 
-A user manual  "fmeqtl.pdf" can be found in doc/ directory
+A user manual  "fmqtl.pdf" can be found in "doc/" directory
 
 
 
