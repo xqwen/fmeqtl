@@ -47,6 +47,12 @@ sub parse_args{
 	    next;
 	}
 	
+
+	#print STDERR "Error: unknown command line option \"$ARGV[0]\"\n";
+	#print STDERR "usage: perl eqtlbma2fmeqtl.pl --geno list_genotypes.txt --scoord snp_coords.bed.gz --exp list_explevels.txt --gcoord gene_coords.bed.gz  --cis 1000 --outdir eqtl_dat\n";
+	#exit(0);
+
+
     }
     
 }

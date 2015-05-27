@@ -22,7 +22,7 @@ controller::controller(char *data_file, char *grid_file){
   
   p = pars.geno_vec[0].size();
   s = pars.pheno_vec.size();
-  
+  q = pars.covar_vec[0].size();
    
   // gsl random number generator
   gsl_rng_env_setup();
@@ -78,11 +78,14 @@ void controller::init(){
 
    
   Xgv = pars.geno_vec;
+  /*
   for(int i=0;i<s;i++){
     vector<vector<double> > cvec;
     Xcv.push_back(cvec);
   }
-    
+  */
+  Xcv = pars.covar_vec;
+  
   
     
   if(Xgv.size() == 0)
@@ -222,6 +225,38 @@ void controller::scan(){
 
 
 }
+
+// option 4: tally effect size in each subgroup
+
+void controller::tally(){
+
+  init();
+
+  for(int i=0;i<p;i++){
+  
+    SNP snp(pars.geno_map[i],i);
+    vector<double> rstv = sslr.get_SNP_effect(i);
+    
+    fprintf(outfd,"%15s %10s\t",gene.c_str(), pars.geno_map[i].c_str()); 
+
+    
+    for(int j=0;j<s;j++){
+      fprintf(outfd,"%7.3e %7.3e\t ",rstv[2*j], sqrt(rstv[2*j+1]));
+    }
+	
+    fprintf(outfd,"\n");
+     
+  }
+
+
+
+
+
+}
+
+
+
+
       
 
 

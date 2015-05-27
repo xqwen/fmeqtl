@@ -11,6 +11,8 @@ class parser {
  public:
   
   vector<vector<vector<double> > > geno_vec;
+  vector<vector<vector<double> > > covar_vec;
+
   vector<vector<double> > pheno_vec;
   
   map<int, string> pheno_map;

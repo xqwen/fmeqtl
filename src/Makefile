@@ -1,8 +1,8 @@
 install: sbams_mvlr/sbams_mvlr  sbams_sslr/sbams_sslr
-	mkdir -p fmeqtl_bin
-	cp sbams_mvlr/sbams_mvlr fmeqtl_bin/
-	cp sbams_sslr/sbams_sslr fmeqtl_bin/
-	cp utility/*.pl utility/fm_eqtl fmeqtl_bin/
+	mkdir -p fmqtl_bin
+	cp sbams_mvlr/sbams_mvlr fmqtl_bin/
+	cp sbams_sslr/sbams_sslr fmqtl_bin/
+	cp utility/*.pl utility/fm_qtl fmqtl_bin/
 	make clean
 sbams_mvlr/sbams_mvlr:
 	cd sbams_mvlr;make;cd ..

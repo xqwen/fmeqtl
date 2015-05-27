@@ -4,7 +4,8 @@ using namespace std;
 #include <math.h>
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_cdf.h>
-
+#include <gsl/gsl_statistics.h>
+#include <gsl/gsl_fit.h>
 
 void SSLR::init(vector<vector<double> > & Y_in, vector<vector<vector<double> > >& Xg_in, vector<vector<vector<double> > > & Xc_in){
   
@@ -683,6 +684,39 @@ double SSLR::compute_log10_ABF(vector<vector<int> >& indicator, double phi2, dou
 
 
 // utility
+
+// simple linear regression to estimate SNP effect
+vector<double> SSLR::get_SNP_effect(int p){
+
+  vector<double> rst;
+  for(int i=0;i<s;i++){
+    
+    double *yv = new double[nv[i]];
+    double *gv = new double[nv[i]];
+    for(int j=0;j<nv[i];j++){
+      yv[j] = gsl_matrix_get(Yv[i],j,0);
+      gv[j] = gsl_matrix_get(Xgv[i],j,p);
+    }
+    
+    double bhat = 0;
+    double muhat = 0;
+    double vmu=0;
+    double vb=0;
+    double covmb = 0;
+    double sumsq =0;
+    if(gsl_stats_variance(gv,1,nv[i])>0)
+      gsl_fit_linear (gv, 1, yv, 1, nv[i], &muhat, &bhat, &vmu, &covmb, &vb, &sumsq);
+    rst.push_back(bhat);
+    rst.push_back(vb);
+    delete[] yv;
+    delete[] gv;
+  }
+
+  return rst;
+
+
+}
+
 
 
 double SSLR::log10_weighted_sum(vector<double> &vec, vector<double> &wts){

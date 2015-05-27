@@ -64,7 +64,7 @@ class SSLR {
   void compute_sigma_mle(vector<vector<int> >& config);
   void invert_Sigma();
   gsl_matrix *compute_residual(gsl_matrix *y, gsl_matrix *X, int size, int n,double &factor);
-
+  
   
   // utilites for configuration specific computation
   
@@ -107,7 +107,7 @@ class SSLR {
   }
 
 
-
+  vector<double> get_SNP_effect(int p);
   
   double log10_weighted_sum(vector<double> &vec, vector<double> &wts);
 

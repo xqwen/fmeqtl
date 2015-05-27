@@ -108,7 +108,7 @@ int main(int argc, char **argv){
 
     // run options
     
-    if(strcmp(argv[i], "-mcmc")==0 ){ // mcmc
+    if(strcmp(argv[i], "-mcmc")==0 || strcmp(argv[i],"-fm")==0){ // mcmc
       run_option = 1;
       continue;
     }
@@ -129,6 +129,12 @@ int main(int argc, char **argv){
     
     if(strcmp(argv[i], "-prep_hm")==0){ // prepare for hierarchical model
       run_option = 4;
+      continue;
+    }
+
+
+    if(strcmp(argv[i], "-tally")==0){ // single SNP analysis per group
+      run_option = 5;
       continue;
     }
     
@@ -164,14 +170,20 @@ int main(int argc, char **argv){
   
   
   
- 
-
-  
+    
   if(run_option == 4){
     con.prep_single_bf();
     return 1;
   }
   
+
+  if(run_option == 5){
+    con.tally();
+  }
+
+
+
+
   // all other options need prior
   
   if(strlen(prior_file)==0)
@@ -193,6 +205,10 @@ int main(int argc, char **argv){
     con.gene_level_analysis();
     return 1;
   }
+
+
+  
+
 
 }
 

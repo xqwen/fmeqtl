@@ -107,7 +107,7 @@ int main(int argc, char **argv){
 
     // run options
     
-    if(strcmp(argv[i], "-mcmc")==0 ){ // mcmc
+    if(strcmp(argv[i], "-mcmc")==0 || strcmp(argv[i],"-fm")==0){ // mcmc
       run_option = 1;
       continue;
     }

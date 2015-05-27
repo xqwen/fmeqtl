@@ -74,6 +74,8 @@ class controller {
 
   int p;
   int s;
+  int q;
+
 
   int meta; // meta-analysis option: only consistent config considered
 
@@ -145,7 +147,7 @@ class controller {
   void prep_single_bf();
   void scan();
   void gene_level_analysis();
-
+  void tally();
   
   void set_gene(string gname){
     gene=gname;

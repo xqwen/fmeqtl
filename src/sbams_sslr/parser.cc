@@ -84,6 +84,8 @@ void parser::process_line(string line){
     
     vector<vector<double> > gvec;
     geno_vec.push_back(gvec);
+    vector<vector<double> > cvec;
+    covar_vec.push_back(cvec);
   }
   if(strcmp(header,"geno") == 0 || strcmp(header,"covariate")==0){
     int index = pheno_index[string(grp)];
@@ -94,6 +96,14 @@ void parser::process_line(string line){
     }
   } 
  
+  if(strcmp(header, "controlled") == 0){
+    int index = pheno_index[string(grp)];
+    covar_vec[index].push_back(vecv);
+  }
+
+
+
+
 
   delete[] content;
 
